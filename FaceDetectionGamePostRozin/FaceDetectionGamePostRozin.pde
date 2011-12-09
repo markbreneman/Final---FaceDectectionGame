@@ -9,8 +9,8 @@ int brightness_value  = 0;
 ball fallingBall; // variable for the falling ball
 int ballXPos;
 int ballYPos;
-int ballheight=5;
-int ballwidth=5;
+int ballheight=10;
+int ballwidth=10;
 int Xspeed=4;
 int Yspeed=4;
 float dy;
@@ -29,12 +29,9 @@ void setup() {
 }
 
 void draw() {
-
-  // grab a new frame
-  // and convert to gray
-  opencv.read();
-  opencv.flip( OpenCV.FLIP_HORIZONTAL ); // flip vertically and horizontally
-  opencv.convert( GRAY );
+  opencv.read();//GRAB A NEW FRAME
+  opencv.flip( OpenCV.FLIP_HORIZONTAL ); // FLIP IMAGE HORIZONTALLY
+//  opencv.convert( GRAY );
   opencv.contrast( contrast_value );
   opencv.brightness( brightness_value );
 
@@ -100,19 +97,7 @@ void draw() {
       // If the object reaches either edge, multiply speed by -1 to turn it around.
       Xspeed = abs(Xspeed);
       //      ballXPos = faceRight+Xspeed;
-      println("collideRigtSide");
+      println("collideRightSide");
     }
-    //    
-
-
   }
 }
-
-/**
- * Changes contrast/brigthness values
- */
-void mouseDragged() {
-  contrast_value   = (int) map( mouseX, 0, width, -128, 128 );
-  brightness_value = (int) map( mouseY, 0, width, -128, 128 );
-}
-
