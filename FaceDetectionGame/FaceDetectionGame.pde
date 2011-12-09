@@ -7,8 +7,12 @@ OpenCV opencv;
 int contrast_value    = 0;
 int brightness_value  = 0;
 ball fallingBall; // variable for the falling ball
+int droppingBallX=width/2;
 int droppingBallY;
-int speed=10;
+int ballheight=10;
+int ballwidth=10;
+int Xspeed=10;
+int Yspeed=10;
 
 
 void setup() {
@@ -17,12 +21,9 @@ void setup() {
   opencv = new OpenCV( this );
   opencv.capture( width, height );                   // open video stream
   opencv.cascade( OpenCV.CASCADE_FRONTALFACE_ALT );  // load detection description, here-> front face detection : "haarcascade_frontalface_alt.xml"
-
-
   // print usage
   println( "Drag mouse on X-axis inside this sketch window to change contrast" );
   println( "Drag mouse on Y-axis inside this sketch window to change brightness" );
-  fallingBall = new ball();
 }
 
 
@@ -52,26 +53,30 @@ void draw() {
   // draw face area(s)
   noFill();
   stroke(255, 0, 0);
-  ellipse(width/2, droppingBallY, 10, 10);
-  
-  
-  droppingBallY=droppingBallY+speed;
+  ellipse(width/2, droppingBallY, ballwidth, ballheight);//Drawing the ball
 
-  if ((droppingBallY > height) || (droppingBallY < 0)) {
-    // If the object reaches either edge, multiply speed by -1 to turn it around.
-    speed = speed * -1;
-  }
+  //  droppingBallX+=Xspeed;
+  droppingBallY+=Yspeed;
+ if (droppingBallY==height){droppingBallY=height;Yspeed=0;
+    }
+ if( droppingBallY < 0){Yspeed*=-1;} 
 
   ////FACE DETECTION RECTANGLE DRAWING
-  
-  
-  
+
   for ( int i=0; i<faces.length; i++ ) {
     rect( faces[i].x, faces[i].y, faces[i].width, faces[i].height );
+    if (droppingBallY > faces[i].y-ballheight) {
+      // If the object reaches either edge, multiply speed by -1 to turn it around.
+      Yspeed *= -1;
+    }
+    if ((droppingBallX > width) || (droppingBallX < 0)) {
+      // If the object reaches either edge, multiply speed by -1 to turn it around.
+      Xspeed = Xspeed * -1;
+    }
   }
+   
 
   //    fallingBall.move();
-
 }
 
 
