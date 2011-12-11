@@ -97,6 +97,7 @@ void draw() {
   ////FACE DETECTION RECTANGLE DRAWING
 
   for ( int j=0; j<faces.length; j++ ) {
+    rectMode(CORNER);
     noFill();
     rect( faces[j].x, faces[j].y, faces[j].width, faces[j].height );
     ///CREATING THE TOP SURFACE 
