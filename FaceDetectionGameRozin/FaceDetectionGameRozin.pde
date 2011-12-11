@@ -18,7 +18,7 @@ float dy;
 
 void setup() {
 
-  size( 320, 240 );
+  size( 640, 480 );
   opencv = new OpenCV( this );
   opencv.capture( width, height );                   // open video stream
   opencv.cascade( OpenCV.CASCADE_FRONTALFACE_ALT );  // load detection description, here-> front face detection : "haarcascade_frontalface_alt.xml"
@@ -71,7 +71,7 @@ void draw() {
   ////FACE DETECTION RECTANGLE DRAWING
 
   for ( int i=0; i<faces.length; i++ ) {
-    println(faces[i].centroid);
+//    println(faces[i].centroid);
     noFill();
    // rect( faces[i].x, faces[i].y, faces[i].width, faces[i].height );
     ///CREATING THE TOP SURFACE 

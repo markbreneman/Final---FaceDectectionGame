@@ -1,6 +1,10 @@
 //LIBRARY CALLS
 import hypermedia.video.*;
 import java.awt.Rectangle;
+import pbox2d.*;
+import org.jbox2d.collision.shapes.*;
+import org.jbox2d.common.*;
+import org.jbox2d.dynamics.*;
 
 //OPEN CV VARIABLES 
 OpenCV opencv;
@@ -16,7 +20,7 @@ int ballwidth=10;
 int Xspeed=10;
 int Yspeed=10;
 float dy;
-ArrayList balls; 
+ArrayList Balls; 
 
 
 
@@ -33,11 +37,22 @@ void setup() {
   opencv.cascade( OpenCV.CASCADE_FRONTALFACE_ALT );  // load detection description, here-> front face detection : "haarcascade_frontalface_alt.xml"
   println( "Drag mouse on X-axis inside this sketch window to change contrast" );
   println( "Drag mouse on Y-axis inside this sketch window to change brightness" );
-  //  opencv.blur(OpenCV.BLUR, 3);                //  Blur to remove camera noise
-  //  opencv.threshold(20);       
+//  opencv.blur(OpenCV.BLUR, 3);                //  Blur to remove camera noise
+//  opencv.threshold(20);       
   //BALLSETUP
   ballXPos=width/2;
   ballYPos=ballheight+1;
+  Balls= new ArrayList();
+  for (int i = 0; i < Balls.size();i++) {            // using the .size() to get the number of items in the array list 
+//    ((ball)Balls.get(i)).drawBall();                  // this is a bit unpleasant... we need to cast waht we get out of
+//     ((ball)Balls.get(i)).randomizePosition();        // the array list as a Ball , otherwise it wont know it is an object
+  }                                                    // so by putting (Ball) before it we are forcing it to think of it 
+                             
+  
+  
+  //TIMER
+  timer=new Timer(5000);
+  timer.start();
 }
 
 void draw() {
@@ -56,7 +71,10 @@ void draw() {
   stroke(255, 0, 0);
   //  ellipseMode(CENTER);
   //  ellipse(ballXPos, ballYPos, ballwidth, ballheight);//DRAWING THE BALL    
-  new ball(ballXPos, ballYPos); 
+  new ball(ballXPos,ballYPos); 
+  
+  if (timer.isFinished()){new ball(int(random(0, width)),int(random(0,height)));}
+    
 
   if (faces.length > 0) {
     ballXPos+=Xspeed;
@@ -113,4 +131,3 @@ void draw() {
     }
   }
 }
-
