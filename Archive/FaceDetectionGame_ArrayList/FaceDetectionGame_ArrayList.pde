@@ -1,10 +1,6 @@
 //LIBRARY CALLS
 import hypermedia.video.*;
 import java.awt.Rectangle;
-import pbox2d.*;
-import org.jbox2d.collision.shapes.*;
-import org.jbox2d.common.*;
-import org.jbox2d.dynamics.*;
 
 //OPEN CV VARIABLES 
 OpenCV opencv;
@@ -13,12 +9,12 @@ int brightness_value  = 0;
 
 ///BALL VARIABLES
 
-int ballxPos;
-int ballyPos;
+int ballXPos;
+int ballYPos;
 int ballheight=10;
 int ballwidth=10;
-int xAccel=10;
-int yAccel=10;
+int Xspeed=10;
+int Yspeed=10;
 float dy;
 ArrayList balls; 
 
@@ -36,8 +32,9 @@ void setup() {
   println( "Drag mouse on Y-axis inside this sketch window to change brightness" );
   //  opencv.blur(OpenCV.BLUR, 3);                //  Blur to remove camera noise
   //  opencv.threshold(20);       
-  
   //BALLSETUP
+  ballXPos=width/2;
+  ballYPos=ballheight+1;
   balls= new ArrayList();
   balls.add(new Ball(width/2, height/2, 10));
 
@@ -61,25 +58,29 @@ void draw() {
   fill(255, 0, 0);
   stroke(255, 0, 0);
   //  ellipseMode(CENTER);
-  //  ellipse(ballxPos, ballyPos, ballwidth, ballheight);//DRAWING THE BALL    
+  //  ellipse(ballXPos, ballYPos, ballwidth, ballheight);//DRAWING THE BALL    
   //  if (faces.length > 0) {
-  //  ballxPos+=xAccel;
-  //  ballyPos+=yAccel;
+  //  ballXPos+=Xspeed;
+  //  ballYPos+=Yspeed;
   //
   //    //KEEPING THE BALL IN BOUNDS OF THE SCREEN
   //
-  //    if (ballyPos>height) {
-  //      ballyPos=height;
-  //      yAccel=0;
-  //      xAccel=0;
+  //    if (ballYPos>height) {
+  //      ballYPos=height;
+  //      Yspeed=0;
+  //      Xspeed=0;
   //    }
-  //    if ( ballyPos < ballheight) {
-  //      yAccel*=-1;
+  //    if ( ballYPos < ballheight) {
+  //      Yspeed*=-1;
   //    } 
-  //    if ( ballxPos < ballwidth || ballxPos >width-ballwidth ) {
-  //      xAccel*=-1;
+  //    if ( ballXPos < ballwidth || ballXPos >width-ballwidth ) {
+  //      Xspeed*=-1;
   //    } 
-
+  for (int i = balls.size()-1; i >= 0; i--) {
+    // An ArrayList doesn't know what it is storing so we have to cast the object coming out
+    Ball ball = (Ball) balls.get(i);
+    ball.moveBall();
+  }
 
   ////FACE DETECTION RECTANGLE DRAWING
 
@@ -93,33 +94,31 @@ void draw() {
     int faceTop=faces[i].y;
     int faceCenterX=faces[i].x+faces[i].width/2;
     int faceCenterY=faces[i].y+faces[i].height/2;
-    for (int j=0; j<balls.size(); j++) {
-      Ball ball = (Ball) balls.get(j);
-      ball.moveBall();
 
-      if (ball.yPos > faceTop-ballheight&& ball.yPos<faceCenterY && ball.xPos>faceLeft+ballwidth && ball.xPos<faceRight+ballwidth) {
-        ball.yAccel = -abs(ball.yAccel);
-        //      ballyPos = faceTop+yAccel;
-        println("collideTop");
-      }
-      //    //SIDE RECTANGLE EFFECT
-      if (ball.yPos > faceTop && ball.yPos < faceBottom && ball.xPos > faceLeft && ball.xPos<faceCenterX) {
-        ball.xAccel = -abs(ball.xAccel);
-        //      ballxPos = faceLeft+xAccel;
-        println("collideLeftSide");
-      }
 
-      if (ball.yPos > faceTop && ball.yPos < faceBottom  && ball.xPos<faceRight && ball.xPos>faceCenterX) {
-        ball.xAccel = abs(ball.xAccel);
-        //      ballxPos = faceRight+xAccel;
-        println("collideRightSide");
-      }
+    if (ballYPos > faceTop-ballheight&& ballYPos<faceCenterY && ballXPos>faceLeft+ballwidth && ballXPos<faceRight+ballwidth) {
+      Yspeed = -abs(Yspeed);
+      //      ballYPos = faceTop+Yspeed;
+      println("collideTop");
     }
-    if (timer.isFinished()) {
-      // Add a new ball
-      balls.add(new Ball(int(random(0, width)), int(random(0, height/4)), 10)); 
-      // Start timer again
-      timer.start();
+    //    //SIDE RECTANGLE EFFECT
+    if (ballYPos > faceTop && ballYPos < faceBottom && ballXPos > faceLeft && ballXPos<faceCenterX) {
+      Xspeed = -abs(Xspeed);
+      //      ballXPos = faceLeft+Xspeed;
+      println("collideLeftSide");
+    }
+
+    if (ballYPos > faceTop && ballYPos < faceBottom  && ballXPos<faceRight && ballXPos>faceCenterX) {
+      Xspeed = abs(Xspeed);
+      //      ballXPos = faceRight+Xspeed;
+      println("collideRightSide");
     }
   }
+  if (timer.isFinished()) {
+    // Add a new ball
+    balls.add(new Ball(int(random(0, width)), int(random(0, height/4)), 10)); 
+    // Start timer again
+    timer.start();
   }
+}
+
