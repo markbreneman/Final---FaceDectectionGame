@@ -1,4 +1,6 @@
 
+// A rectangular box
+
 class Paddle {
 
   // We need to keep track of a Body and a width and height
@@ -10,10 +12,10 @@ class Paddle {
   Paddle(float x_, float y_) {
     float x = x_;
     float y = y_;
-    w = 30;
-    h = 30;
+    w =150;
+    h =150;
     // Add the box to the box2d world
-    makeBody(new Vec2(x,y),w,h);
+    makeBody(new Vec2(x, y), w, h);
   }
 
   // This function removes the particle from the box2d world
@@ -24,7 +26,7 @@ class Paddle {
   boolean contains(float x, float y) {
     Vec2 worldPoint = box2d.coordPixelsToWorld(x, y);
     Shape s = paddle.getShapeList();
-    boolean inside = s.testPoint(paddle.getMemberXForm(),worldPoint);
+    boolean inside = s.testPoint(paddle.getMemberXForm(), worldPoint);
     return inside;
   }
 
@@ -36,11 +38,13 @@ class Paddle {
     float a = paddle.getAngle();
     rectMode(PConstants.CENTER);
     pushMatrix();
-    translate(pos.x,pos.y);
-    rotate(a);
-    fill(175);
-    stroke(0);
-    rect(10,10,w,h);
+    translate(pos.x, pos.y);
+    //    rotate(a);
+    //    fill(175);
+    noFill();
+    stroke(255);
+    strokeWeight(2);
+    rect(10, 10, w, h);
     popMatrix();
   }
 
@@ -66,11 +70,9 @@ class Paddle {
     paddle.setMassFromShapes();
 
     // Give it some initial random velocity
-//    paddle.setLinearVelocity(new Vec2(random(-5,5),random(2,5)));
-//    paddle.setAngularVelocity(random(-5,5));
+    //    paddle.setLinearVelocity(new Vec2(random(-5,5),random(2,5)));
+    //    paddle.setAngularVelocity(random(-5,5));
   }
-
 }
-
 
 

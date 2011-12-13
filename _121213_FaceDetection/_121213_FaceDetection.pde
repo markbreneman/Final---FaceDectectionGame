@@ -3,31 +3,25 @@ import org.jbox2d.collision.shapes.*;
 import org.jbox2d.common.*;
 import org.jbox2d.dynamics.*;
 import org.jbox2d.dynamics.joints.*;
+import org.jbox2d.dynamics.contacts.*;
 import hypermedia.video.*;
 import java.awt.Rectangle;
 
 // A reference to our box2d world
 PBox2D box2d;
+int zoom=3; //Scaling up the display
+
 
 // A list we'll use to track fixed objects
 ArrayList<Boundary> boundaries;
 // A list for all of our rectangles
 ArrayList<Ball> balls;
 
-//// The Spring that will attach to the paddle
+// SPRING VARIABLE
 Spring spring1;
-
 
 //PADDLE VARAIABLES 
 Paddle paddle1;
-
-
-int paddle1var=10;
-int paddle1x=paddle1var;
-int paddle1y=paddle1var;
-int paddle1width=paddle1var;
-int paddle1height=paddle1var;
-
 
 
 //OPEN CV VARIABLES 
@@ -40,12 +34,13 @@ Timer timer;
 
 
 void setup() {
-  size(320, 240);
+  size(640, 480);
   smooth();
 
   // Initialize box2d physics and create the world
   box2d = new PBox2D(this);
   box2d.createWorld();
+  box2d.listenForCollisions();
   // We are setting a custom gravity
   box2d.setGravity(0, -20);
 
@@ -65,23 +60,25 @@ void setup() {
   paddle1=new Paddle(width/2, height/2);
   // Make springs- They will only actually be made when faces are detected
   spring1 = new Spring();
-  spring1.bind(width/2, height/2, paddle1);
+  spring1.bind(width/2+10, height/2+10, paddle1);
 
 
   //OPENCVSETUP
   opencv = new OpenCV( this );
-  opencv.capture( width, height );                   // START VIDEO
+  opencv.capture( width/zoom, height/zoom);                   // START VIDEO
   opencv.cascade( OpenCV.CASCADE_FRONTALFACE_ALT );  // load detection description, here-> front face detection : "haarcascade_frontalface_alt.xml"
 
 
   //TIMER
-  timer=new Timer(2000);
+  timer=new Timer(100);
   timer.start();
+  
+//  // Add a listener to listen for collisions!
+//box2d.world.setContactListener(new CustomListener());
 }
 
-//void mouseReleased() {
-//  spring1.destroy();
-//}
+
+
 
 
 void draw() {
@@ -96,10 +93,17 @@ void draw() {
   Rectangle[] faces = opencv.detect( 1.2, 2, OpenCV.HAAR_DO_CANNY_PRUNING, 40, 40 );
 
   // display the image
-  image( opencv.image(), 0, 0 );
+  image( opencv.image(), 0, 0,width,height );
 
   // We must always step through time!
   box2d.step();
+  
+    for ( int i=0; i<faces.length; i++ ) {
+    //SCALE THE SIZE BACK UP
+    faces[i].x*=zoom;
+    faces[i].y*=zoom;
+    faces[i].width*=zoom;
+    faces[i].height*=zoom;}
 
   ////FACE DETECTION PADDLE MOVEMENT
   for ( int i=0; i<constrain(faces.length,0,3); i++ ) {    
@@ -130,23 +134,24 @@ void draw() {
 
   // Display Paddle
   paddle1.display();
-  spring1.display();
+//  spring1.display();
 
   // Ball that leave the screen, we delete them
   // (note they have to be deleted from both the box2d world and our list
+
   for (int i = balls.size()-1; i >= 0; i--) {
     Ball b = balls.get(i);
     if (b.done()) {
       balls.remove(i);
     }
   }
-  //  if (timer.isFinished()) {
-  //    // Add a new ball
-  //    Ball p = new Ball(width/2, 0, random(5, 10));
-  //    balls.add(p); 
-  //    // Start timer again
-  //    timer.start();
-  //  }
+    if (timer.isFinished()) {
+      // Add a new ball
+      Ball p = new Ball(random(0,width), 35, random(5, 10));
+      balls.add(p); 
+      // Start timer again
+      timer.start();
+   }
   if (mousePressed) {
     Ball p = new Ball(mouseX, mouseY, random(5, 10));
     balls.add(p);

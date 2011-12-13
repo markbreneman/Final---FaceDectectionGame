@@ -50,9 +50,10 @@ class Spring {
     // And that's the target
     md.target.set(mp);
     // Some stuff about how strong and bouncy the spring should be
-    md.maxForce = 1000.0 * paddle.paddle.m_mass;
-    md.frequencyHz = 5.0;
-    md.dampingRatio = 0.9;
+     md.maxForce = 5000000*paddle.paddle.m_mass;
+//    md.maxForce = 1000.0 * paddle.paddle.m_mass;
+//    md.frequencyHz = 1.0;
+//    md.dampingRatio = 0;
 
     // Wake up body!
     paddle.paddle.wakeUp();

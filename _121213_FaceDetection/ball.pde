@@ -3,6 +3,7 @@ class Ball {
   // We need to keep track of a Body and a radius
   Body body;
   float r;
+  color col;
 
   Ball(float x, float y, float r_) {
     r = r_;
@@ -37,6 +38,7 @@ class Ball {
     translate(pos.x, pos.y);
     rotate(-a);
     fill(175);
+//     fill(random(175,255),random(175,255),random(175,255));
     stroke(0);
     strokeWeight(1);
     ellipse(0, 0, r*2, r*2);
@@ -67,6 +69,11 @@ class Ball {
     // Give it a random initial velocity (and angular velocity)
     body.setLinearVelocity(new Vec2(random(-10f, 10f), random(5f, 10f)));
     body.setAngularVelocity(random(-10, 10));
+  }
+  
+    // Change color when hit
+  void change() {
+    col = color(255,0,0); 
   }
 }
 

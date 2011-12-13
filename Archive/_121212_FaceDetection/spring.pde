@@ -44,18 +44,18 @@ class Spring {
     // Body 1 is just a fake ground body for simplicity (there isn't anything at the mouse)
     md.body1 = box2d.world.getGroundBody();
     // Body 2 is the box's boxy
-    md.body2 = box.body;
+    md.body2 = paddle.paddle;
     // Get the mouse location in world coordinates
     Vec2 mp = box2d.coordPixelsToWorld(x,y);
     // And that's the target
     md.target.set(mp);
     // Some stuff about how strong and bouncy the spring should be
-    md.maxForce = 1000.0f * paddle.body.m_mass;
-    md.frequencyHz = 5.0f;
-    md.dampingRatio = 0.9f;
+    md.maxForce = 1000.0 * paddle.paddle.m_mass;
+    md.frequencyHz = 5.0;
+    md.dampingRatio = 0.9;
 
     // Wake up body!
-    paddle.body.wakeUp();
+    paddle.paddle.wakeUp();
 
     // Make the joint!
     mouseJoint = (MouseJoint) box2d.world.createJoint(md);

@@ -12,22 +12,31 @@ PBox2D box2d;
 // A list we'll use to track fixed objects
 ArrayList<Boundary> boundaries;
 // A list for all of our rectangles
-ArrayList<Box> boxes;
+ArrayList<Ball> balls;
 
 //// The Spring that will attach to the paddle
-//Spring spring;
+Spring spring1;
 
-// A list for all of our rectangles
-ArrayList<Paddle> paddle;
 
-// Perlin noise values
-float xoff = 0;
-float yoff = 1000;
+//PADDLE VARAIABLES 
+Paddle paddle1;
+
+
+int paddle1var=10;
+int paddle1x=paddle1var;
+int paddle1y=paddle1var;
+int paddle1width=paddle1var;
+int paddle1height=paddle1var;
+
+
 
 //OPEN CV VARIABLES 
 OpenCV opencv;
 int contrast_value    = 0;
 int brightness_value  = 0;
+
+//TIMER VARIABLES
+Timer timer;
 
 
 void setup() {
@@ -41,21 +50,38 @@ void setup() {
   box2d.setGravity(0, -20);
 
   // Create ArrayLists	
-  boxes = new ArrayList<Box>();
+  balls = new ArrayList<Ball>();
   boundaries = new ArrayList<Boundary>();
-  paddle = new ArrayList<Paddle>();
 
-  // Add a bunch of fixed boundaries
-  boundaries.add(new Boundary(width/4, height-5, width/2-50, 10));
-  boundaries.add(new Boundary(3*width/4, height-5, width/2-50, 10));
+  // Set Boundaries of the Wall
+  //  boundaries.add(new Boundary(width/4, height-5, width/2-50, 10));
+  //  boundaries.add(new Boundary(3*width/4, height-5, width/2-50, 10));
+  boundaries.add(new Boundary(width/2, height-5, width, 10));
   boundaries.add(new Boundary(width-5, height/2, 10, height));
   boundaries.add(new Boundary(5, height/2, 10, height));
+
+  // Add 3 Paddles for three players
+  paddle1=new Paddle(width/2, height/2);
+
+  // Make springs- They will only actually be made when faces are detected
+  spring1 = new Spring();
+
 
   //OPENCVSETUP
   opencv = new OpenCV( this );
   opencv.capture( width, height );                   // START VIDEO
   opencv.cascade( OpenCV.CASCADE_FRONTALFACE_ALT );  // load detection description, here-> front face detection : "haarcascade_frontalface_alt.xml"
+
+
+  //TIMER
+  timer=new Timer(50);
+  timer.start();
 }
+
+//void mouseReleased() {
+//  spring1.destroy();
+//}
+
 
 void draw() {
   background(255);
@@ -71,35 +97,19 @@ void draw() {
   // display the image
   image( opencv.image(), 0, 0 );
 
-
   // We must always step through time!
   box2d.step();
-
-  // Make an x,y coordinate out of perlin noise
-  float x = noise(xoff)*width;
-  float y = noise(yoff)*height;
-  xoff += 0.01;
-  yoff += 0.01;
-
-
-  ////FACE DETECTION PADDLE DRAWING
-  for ( int i=0; i<faces.length; i++ ) {
-    noFill();
-    stroke(255, 0, 0);
-    strokeWeight(2);
-    new Paddle(faces[i].x+faces[i].width/2, faces[i].y+faces[i].height/2, faces[i].width, faces[i].height);
-    for (Paddle p:paddle) {
-      p.display();}
-  }
-  //     // Make the spring (it doesn't really get initialized until the mouse is clicked)
-  //    spring = new Spring();
-  //    spring.bind(width/2, height/2, p:paddle);
-  //  }
-
-  // When the mouse is clicked, add a new Box object
-  if (mousePressed) {
-    Box p = new Box(mouseX, mouseY);
-    boxes.add(p);
+  ////FACE DETECTION PADDLE MOVEMENT
+  for ( int i=0; i<constrain(faces.length,0,3); i++ ) {
+    spring1.update(faces[i].x, faces[i].y);
+    for ( int j=0; j<constrain(faces.length,0,3); j++ ) {
+      noFill();
+      stroke(255, 0, 0);
+      strokeWeight(2);
+      rectMode(CORNER);
+      rect(faces[i].x, faces[i].y, faces[i].width, faces[i].height );
+      spring1.bind(faces[0].x+faces[0].width/2, faces[0].y+faces[0].height, paddle1);
+    }
   }
 
   // Display all the boundaries
@@ -108,20 +118,28 @@ void draw() {
   }
 
   // Display all the boxes
-  for (Box b: boxes) {
+  for (Ball b: balls) {
     b.display();
   }
+
   // Display Paddle
+  paddle1.display();
+  spring1.display();
 
-
-  // Boxes that leave the screen, we delete them
+  // Ball that leave the screen, we delete them
   // (note they have to be deleted from both the box2d world and our list
-  for (int i = boxes.size()-1; i >= 0; i--) {
-    Box b = boxes.get(i);
+  for (int i = balls.size()-1; i >= 0; i--) {
+    Ball b = balls.get(i);
     if (b.done()) {
-      boxes.remove(i);
+      balls.remove(i);
     }
   }
-  //  spring.display();
+  if (timer.isFinished()) {
+    // Add a new ball
+    Ball p = new Ball(width/2, 0, random(5, 10));
+    balls.add(p); 
+    // Start timer again
+    timer.start();
+  }
 }
 
