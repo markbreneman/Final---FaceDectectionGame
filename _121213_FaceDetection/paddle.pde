@@ -12,8 +12,8 @@ class Paddle {
   Paddle(float x_, float y_) {
     float x = x_;
     float y = y_;
-    w =150;
-    h =150;
+    w =300;
+    h =300;
     // Add the box to the box2d world
     makeBody(new Vec2(x, y), w, h);
   }

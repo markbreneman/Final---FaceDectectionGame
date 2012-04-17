@@ -37,7 +37,7 @@ class Ball {
     pushMatrix();
     translate(pos.x, pos.y);
     rotate(-a);
-    fill(175);
+    fill(255);
 //     fill(random(175,255),random(175,255),random(175,255));
     stroke(0);
     strokeWeight(1);
